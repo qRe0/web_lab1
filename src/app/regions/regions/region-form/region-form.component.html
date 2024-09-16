@@ -1,0 +1,78 @@
+<div class="container">
+  <h2>{{ isEditMode ? 'Редактирование региона' : 'Добавление нового региона' }}</h2>
+
+  <form #regionForm="ngForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="name">Название</label>
+      <input
+        type="text"
+        class="form-control"
+        id="name"
+        name="name"
+        [(ngModel)]="region.name"
+        required
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="language">Язык</label>
+      <input
+        type="text"
+        class="form-control"
+        id="language"
+        name="language"
+        [(ngModel)]="region.language"
+        required
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="square">Площадь</label>
+      <input
+        type="number"
+        class="form-control"
+        id="square"
+        name="square"
+        [(ngModel)]="region.square"
+        required
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="temperature">Температура</label>
+      <input
+        type="number"
+        class="form-control"
+        id="temperature"
+        name="temperature"
+        [(ngModel)]="region.temperature"
+        required
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="humidity">Влажность</label>
+      <input
+        type="number"
+        class="form-control"
+        id="humidity"
+        name="humidity"
+        [(ngModel)]="region.humidity"
+        required
+      >
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+      {{ isEditMode ? 'Сохранить изменения' : 'Добавить регион' }}
+    </button>
+
+    <button
+      *ngIf="isEditMode"
+      type="button"
+      class="btn btn-danger ml-2"
+      (click)="onDelete()"
+    >
+      Удалить регион
+    </button>
+  </form>
+</div>
