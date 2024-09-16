@@ -20,6 +20,7 @@ export class RegionFormComponent implements OnInit {
   };
 
   isEditMode: boolean = false;
+  docId: string = '';
 
   constructor(
     private regionsService: RegionsService,
@@ -28,13 +29,13 @@ export class RegionFormComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    const idParam = this.route.snapshot.paramMap.get('id');
-    if (idParam) {
-      const id = Number(idParam);
+    const docId = this.route.snapshot.paramMap.get('id');
+    if (docId) {
       this.isEditMode = true;
-      this.regionsService.getRegion(id).subscribe(region => {
+      this.docId = docId;
+      this.regionsService.getRegion(docId).subscribe(region => {
         if (region) {
-          this.region = { ...region };
+          this.region = region;
         }
       });
     }
@@ -42,11 +43,11 @@ export class RegionFormComponent implements OnInit {
 
   onSubmit(): void {
     if (this.isEditMode) {
-      this.regionsService.updateRegion(this.region).subscribe(() => {
+      this.regionsService.updateRegion(this.docId, this.region).then(() => {
         this.router.navigate(['/']);
       });
     } else {
-      this.regionsService.addRegion(this.region).subscribe(() => {
+      this.regionsService.addRegion(this.region).then(() => {
         this.router.navigate(['/']);
       });
     }
@@ -54,7 +55,7 @@ export class RegionFormComponent implements OnInit {
 
   onDelete(): void {
     if (confirm('Вы уверены, что хотите удалить этот регион?')) {
-      this.regionsService.deleteRegion(this.region.id).subscribe(() => {
+      this.regionsService.deleteRegion(this.docId).then(() => {
         this.router.navigate(['/']);
       });
     }

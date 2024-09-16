@@ -1,45 +1,39 @@
 import { Injectable } from '@angular/core';
 import { Region } from '../region';
-import { REGIONS } from '../mock-region-list';
-import { Observable, of } from 'rxjs';
+import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RegionsService {
 
-  private regions = REGIONS;
+  private regionsCollection: AngularFirestoreCollection<Region>;
+  regions$: Observable<Region[]>;
 
-  constructor() { }
+  constructor(private afs: AngularFirestore) {
+    this.regionsCollection = afs.collection<Region>('regions', ref => ref.orderBy('id'));
+    this.regions$ = this.regionsCollection.valueChanges({ idField: 'docId' });
+  }
 
   getRegions(): Observable<Region[]> {
-    return of(this.regions);
+    return this.regionsCollection.valueChanges({ idField: 'docId' });
   }
 
-  getRegion(id: number): Observable<Region | undefined> {
-    return of(this.regions.find(region => region.id === id));
+  getRegion(docId: string): Observable<Region | undefined> {
+    return this.regionsCollection.doc<Region>(docId).valueChanges();
   }
 
-  addRegion(region: Region): Observable<void> {
-    region.id = this.generateId();
-    this.regions.push(region);
-    return of();
+  addRegion(region: Region): Promise<void> {
+    const docId = this.afs.createId();
+    return this.regionsCollection.doc(docId).set({ ...region, id: Date.now() });
   }
 
-  updateRegion(region: Region): Observable<void> {
-    const index = this.regions.findIndex(r => r.id === region.id);
-    if (index !== -1) {
-      this.regions[index] = region;
-    }
-    return of();
+  updateRegion(docId: string, region: Region): Promise<void> {
+    return this.regionsCollection.doc(docId).update(region);
   }
 
-  deleteRegion(id: number): Observable<void> {
-    this.regions = this.regions.filter(region => region.id !== id);
-    return of();
-  }
-
-  private generateId(): number {
-    return this.regions.length > 0 ? Math.max(...this.regions.map(r => r.id)) + 1 : 1;
+  deleteRegion(docId: string): Promise<void> {
+    return this.regionsCollection.doc(docId).delete();
   }
 }

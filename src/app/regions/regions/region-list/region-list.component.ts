@@ -23,6 +23,6 @@ export class RegionListComponent implements OnInit {
   }
 
   onSelect(region: Region): void {
-    this.router.navigate(['/details', region.id]);
+    this.router.navigate(['/details', region.docId]);
   }
 }

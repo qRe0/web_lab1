@@ -5,4 +5,5 @@ export interface Region {
   square: number;
   temperature: number;
   humidity: number;
+  docId?: string;
 }
